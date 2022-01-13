@@ -6,7 +6,9 @@ package com.bobo.vo;
  * @Created by bobo
  */
 public enum ErrorCode {
-    Network_error("9999", "服务器正在升级中，请稍后再试"),
+    Network_error("500", "服务器正在升级中，请稍后再试"),
+    Operation_error("201","操作失败"),
+    UnAuthorization("401","当前未授权"),
     ;
 
     private String code;
