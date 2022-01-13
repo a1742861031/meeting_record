@@ -6,7 +6,17 @@ spring:
     url: jdbc:mysql://10.16.83.149:3306/meeting?useSSL=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: 123456
+  security:
+    user:
+      name: admin
+      password: 123456
 
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 自定义jwt key
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: mySecret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24)
+  tokenHead: Bearer  #JWT负载中拿到开头

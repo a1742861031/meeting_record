@@ -17,4 +17,9 @@ import java.util.List;
 public interface UserService extends IService<User> {
 
     void getUserList(String name, Page<User> page);
+
+    User getUserByUsername(String mobile);
+
+    String login(String mobile, String password);
+
 }

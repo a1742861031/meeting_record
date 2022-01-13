@@ -24,7 +24,7 @@ public class CodeGenerator {
         // Step2：全局配置
         GlobalConfig gc = new GlobalConfig();
         // 填写代码生成的目录(需要修改)
-        String projectPath = "H:\\meeting_record\\meeting_record";
+        String projectPath = "/Users/yanbo/project/backend/meeting_record";
         // 拼接出代码最终输出的目录
         gc.setOutputDir(projectPath + "/src/main/java");
         // 配置开发者信息（可选）（需要修改）
@@ -32,7 +32,7 @@ public class CodeGenerator {
         // 配置是否打开目录，false 为不打开（可选）
         gc.setOpen(false);
         // 实体属性 Swagger2 注解，添加 Swagger 依赖，开启 Swagger2 模式（可选）
-        //gc.setSwagger2(true);
+        gc.setSwagger2(true);
         // 重新生成文件时是否覆盖，false 表示不覆盖（可选）
         gc.setFileOverride(false);
         // 配置主键生成策略，此处为 ASSIGN_ID（可选）
@@ -75,7 +75,7 @@ public class CodeGenerator {
         // Step5：策略配置（数据库表配置）
         StrategyConfig strategy = new StrategyConfig();
         // 指定表名（可以同时操作多个表，使用 , 隔开）（需要修改）
-        strategy.setInclude("user");
+        strategy.setInclude("type");
         // 配置数据表与实体类名之间映射的策略
         strategy.setNaming(NamingStrategy.underline_to_camel);
         // 配置数据表的字段与实体类的属性名之间映射的策略
