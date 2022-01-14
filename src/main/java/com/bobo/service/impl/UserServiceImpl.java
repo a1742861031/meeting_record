@@ -51,9 +51,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (Validator.isNotEmpty(name)) {
             wrapper.like("user_name", name);
         }
+        wrapper.orderByAsc("user_type");
         userMapper.selectPage(page, wrapper);
         List<User> records = page.getRecords();
         for (User record : records) {
+            record.setUserPassword(null);
             String typeName = typeMapper.selectById(record.getUserType()).getTypeName();
             if (typeName != null && Validator.isNotEmpty(typeName)) {
                 record.setTypeName(typeName);
