@@ -18,7 +18,7 @@ public interface UserService extends IService<User> {
 
     void getUserList(String name, Page<User> page);
 
-    User getUserByUsername(String mobile);
+    User getUserByUsername(String username);
 
     String login(String mobile, String password);
 

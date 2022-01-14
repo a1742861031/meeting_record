@@ -48,7 +48,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             LOGGER.info("checking username:{}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                System.out.println(userDetails);
                 //判断当前token是否有效
                 if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                     //判断是否有响应的权限
@@ -59,6 +58,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
-        chain.  doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }

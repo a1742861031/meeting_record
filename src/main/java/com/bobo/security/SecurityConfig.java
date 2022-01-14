@@ -5,6 +5,8 @@ import com.bobo.filter.JwtAuthenticationTokenFilter;
 import com.bobo.handler.RestAuthenticationEntryPoint;
 import com.bobo.handler.RestfulAccessDeniedHandler;
 import com.bobo.service.UserService;
+import com.bobo.vo.MyException;
+import com.bobo.vo.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +93,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                List<UmsPermission> permissionList = adminService.getPermissionList(admin.getId());
 //                return new AdminUserDetails(admin,permissionList);
             }
-            throw new UsernameNotFoundException("用户名或密码错误");
+            throw new MyException(new R("400", "用户名或密码错误"));
         };
     }
     @Bean
