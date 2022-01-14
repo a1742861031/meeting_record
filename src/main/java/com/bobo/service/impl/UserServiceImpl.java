@@ -1,21 +1,18 @@
 package com.bobo.service.impl;
 
 import cn.hutool.core.lang.Validator;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.bobo.entity.Type;
 import com.bobo.entity.User;
 import com.bobo.mapper.TypeMapper;
 import com.bobo.mapper.UserMapper;
 import com.bobo.service.UserService;
 import com.bobo.utils.JwtTokenUtils;
+import com.bobo.vo.EditPassVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.web.configurers.SecurityContextConfigurer;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -81,5 +78,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         SecurityContextHolder.getContext().setAuthentication(authentication);
         token = jwtTokenUtils.generateToken(userDetails);
         return token;
+    }
+
+    @Override
+    public void editPass(EditPassVo editPassVo) {
+        String encode = passwordEncoder.encode(editPassVo.getPassword1());
+        User user = new User();
+        user.setUserPassword(encode);
+        user.setUserId(editPassVo.getUserId());
+        userMapper.updateById(user);
     }
 }
