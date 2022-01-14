@@ -5,20 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.User;
 import com.bobo.service.UserService;
 import com.bobo.utils.JwtTokenUtils;
-import com.bobo.vo.ErrorCode;
-import com.bobo.vo.LoginParams;
-import com.bobo.vo.MyException;
-import com.bobo.vo.R;
+import com.bobo.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,6 +103,21 @@ public class UserController {
             }
         }
         throw new MyException(new R("401", "当前token无效"));
+    }
+
+    @ApiOperation("根据id获取用户信息")
+    @GetMapping("{id}")
+    public R getUserById(@PathVariable Integer id) {
+        User user = userService.getById(id);
+        user.setUserPassword("");
+        return new R(user);
+    }
+
+    @ApiOperation("修改密码")
+    @PutMapping("password")
+    public R editPassword(@RequestBody EditPassVo editPassVo) {
+        userService.editPass(editPassVo);
+        return new R();
     }
 }
 
