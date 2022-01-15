@@ -1,7 +1,6 @@
 package com.bobo.vo;
 
-import com.bobo.entity.Attendance;
-import com.bobo.entity.NonAttendance;
+
 import lombok.Data;
 
 import java.util.Date;
@@ -14,6 +13,8 @@ import java.util.List;
  */
 @Data
 public class RecordVo {
+    private String title;
+
     private Long id;
 
     private String attachment;
@@ -30,9 +31,15 @@ public class RecordVo {
 
     private String time;
 
-    private Boolean verification;
     //出席人员
-    private List<Attendance> attendances;
+    private List<String> attendances;
     //缺席人员
-    private List<NonAttendance> nonAttendances;
+    private List<NonAttendanceVo> nonAttendances;
+
+    @Data
+    public static class NonAttendanceVo{
+        String userName;
+        String reason;
+    }
+
 }

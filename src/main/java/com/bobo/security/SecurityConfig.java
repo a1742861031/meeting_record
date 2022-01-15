@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs/**"
                 )
                 .permitAll()
-                .antMatchers("/user/login", "user/register") //开放登陆注册
+                .antMatchers("/user/login", "/user/register", "/type/list") //开放登陆注册
                 .permitAll()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求又一次option请求
                 .permitAll()

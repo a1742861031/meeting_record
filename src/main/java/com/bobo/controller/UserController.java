@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -119,5 +120,23 @@ public class UserController {
         userService.editPass(editPassVo);
         return new R();
     }
+
+    @ApiOperation("用户注册")
+    @PostMapping("/register")
+    public R register(@RequestBody User user){
+        boolean isSuccess = userService.register(user);
+        if(isSuccess){
+            return new R();
+        }
+        throw new MyException(new R("201","注册用户失败，请重试"));
+    }
+
+    @ApiOperation("获取所有的用户")
+    @GetMapping("/allUser")
+    public R getAllUser(){
+        List<UserVo> userVos = userService.getAllUser();
+        return new R(userVos);
+    }
+
 }
 

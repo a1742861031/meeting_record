@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bobo.vo.EditPassVo;
+import com.bobo.vo.UserVo;
 
 import java.util.List;
 
@@ -24,4 +25,9 @@ public interface UserService extends IService<User> {
     String login(String mobile, String password);
 
    void editPass(EditPassVo editPassVo);
+
+    boolean register(User user);
+
+    List<UserVo> getAllUser();
+
 }

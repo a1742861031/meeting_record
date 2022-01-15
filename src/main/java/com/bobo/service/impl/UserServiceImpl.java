@@ -1,5 +1,6 @@
 package com.bobo.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,7 +11,11 @@ import com.bobo.mapper.UserMapper;
 import com.bobo.service.UserService;
 import com.bobo.utils.JwtTokenUtils;
 import com.bobo.vo.EditPassVo;
+import com.bobo.vo.MyException;
+import com.bobo.vo.R;
+import com.bobo.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenUtils jwtTokenUtils;
+    @Value("${default.avatar}")
+    private String defaultAvatar;
 
     @Override
     public void getUserList(String name, Page<User> page) {
@@ -72,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String token = null;
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("密码不正确");
+            throw new MyException(new R<>("201","账号或密码错误"));
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -87,5 +95,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUserPassword(encode);
         user.setUserId(editPassVo.getUserId());
         userMapper.updateById(user);
+    }
+
+    @Override
+    public boolean register(User user) {
+        if (user.getUserAvatar() == null) {
+            user.setUserAvatar(defaultAvatar);
+        }
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name", user.getUsername());
+        List<User> users = userMapper.selectList(wrapper);
+        if (users.size() != 0) {
+            throw new MyException(new R("201", "当前用户已存在"));
+        }
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+        user.setIsAdmin(0);
+        int insert = userMapper.insert(user);
+        return insert >= 0;
+    }
+
+    @Override
+    public List<UserVo> getAllUser() {
+        List<User> users = userMapper.selectList(null);
+        List<UserVo> userVos= new ArrayList<>();
+        for (User user : users) {
+            UserVo userVo = new UserVo();
+            BeanUtil.copyProperties(user,userVo);
+            userVos.add(userVo);
+        }
+        return userVos;
     }
 }

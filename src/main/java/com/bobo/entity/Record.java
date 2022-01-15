@@ -43,7 +43,5 @@ public class Record implements Serializable {
 
     private String time;
 
-    private Boolean verification;
-
-
+    private String title;
 }
