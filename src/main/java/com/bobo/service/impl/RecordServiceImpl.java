@@ -49,8 +49,20 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             attendanceWrapper.eq("record_id", record.getId());
             List<Attendance> attendances = attendanceMapper.selectList(attendanceWrapper);
             List<NonAttendance> nonAttendances = nonAttendanceMapper.selectList(nonAttendanceWrapper);
-            recordVo.setAttendances(attendances);
-            recordVo.setNonAttendances(nonAttendances);
+            ArrayList<String > attPeople = new ArrayList<>();
+
+            for (Attendance attendance : attendances) {
+                attPeople.add(attendance.getPersonName());
+                recordVo.setAttendances(attPeople);
+            }
+            ArrayList<RecordVo.NonAttendanceVo> nonAttPeople = new ArrayList<>();
+            for (NonAttendance nonAttendance : nonAttendances) {
+                RecordVo.NonAttendanceVo nonAttendanceVo = new RecordVo.NonAttendanceVo();
+                nonAttendanceVo.setUserName(nonAttendance.getPersonName());
+                nonAttendanceVo.setReason(nonAttendance.getReason());
+                nonAttPeople.add(nonAttendanceVo);
+            }
+            recordVo.setNonAttendances(nonAttPeople);
             recordVos.add(recordVo);
         }
         return recordVos;
@@ -59,15 +71,23 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     @Override
     @Transactional
     public Boolean addRecord(RecordVo recordVo) {
+        System.out.println(recordVo);
         Record record = new Record();
         BeanUtil.copyProperties(recordVo, record);
         int insert = recordMapper.insert(record);
         if (insert > 0) {
-            for (Attendance attendance : recordVo.getAttendances()) {
-                attendanceMapper.insert(attendance);
+            for (String attendance : recordVo.getAttendances()) {
+                Attendance attendance1 = new Attendance();
+                attendance1.setRecordId(record.getId());
+                attendance1.setPersonName(attendance);
+                attendanceMapper.insert(attendance1);
             }
-            for (NonAttendance nonAttendance : recordVo.getNonAttendances()) {
-                nonAttendanceMapper.insert(nonAttendance);
+            for (RecordVo.NonAttendanceVo nonAttendance : recordVo.getNonAttendances()) {
+                NonAttendance nonAttendance1 = new NonAttendance();
+                nonAttendance1.setRecordId(record.getId());
+                nonAttendance1.setPersonName(nonAttendance.getUserName());
+                nonAttendance1.setReason(nonAttendance.getReason());
+                nonAttendanceMapper.insert(nonAttendance1);
             }
             return true;
         }
@@ -85,12 +105,12 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             QueryWrapper<NonAttendance> nonAttendanceWrapper = new QueryWrapper<>();
             attendanceMapper.delete(attendanceWrapper);
             nonAttendanceMapper.delete(nonAttendanceWrapper);
-            for (Attendance attendance : recordVo.getAttendances()) {
-                attendanceMapper.insert(attendance);
-            }
-            for (NonAttendance nonAttendance : recordVo.getNonAttendances()) {
-                nonAttendanceMapper.insert(nonAttendance);
-            }
+//            for (Attendance attendance : recordVo.getAttendances()) {
+//                attendanceMapper.insert(attendance);
+//            }
+//            for (NonAttendance nonAttendance : recordVo.getNonAttendances()) {
+//                nonAttendanceMapper.insert(nonAttendance);
+//            }
             return true;
         }
         return false;
