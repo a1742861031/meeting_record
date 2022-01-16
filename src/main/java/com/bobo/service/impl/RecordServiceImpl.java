@@ -3,9 +3,11 @@ package com.bobo.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bobo.entity.Attendance;
+import com.bobo.entity.File;
 import com.bobo.entity.NonAttendance;
 import com.bobo.entity.Record;
 import com.bobo.mapper.AttendanceMapper;
+import com.bobo.mapper.FileMapper;
 import com.bobo.mapper.NonAttendanceMapper;
 import com.bobo.mapper.RecordMapper;
 import com.bobo.service.RecordService;
@@ -34,6 +36,8 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     private AttendanceMapper attendanceMapper;
     @Autowired
     private NonAttendanceMapper nonAttendanceMapper;
+    @Autowired
+    private FileMapper fileMapper;
 
     @Override
     @Transactional
@@ -49,7 +53,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             attendanceWrapper.eq("record_id", record.getId());
             List<Attendance> attendances = attendanceMapper.selectList(attendanceWrapper);
             List<NonAttendance> nonAttendances = nonAttendanceMapper.selectList(nonAttendanceWrapper);
-            ArrayList<String > attPeople = new ArrayList<>();
+            ArrayList<String> attPeople = new ArrayList<>();
 
             for (Attendance attendance : attendances) {
                 attPeople.add(attendance.getPersonName());
@@ -88,6 +92,14 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
                 nonAttendance1.setPersonName(nonAttendance.getUserName());
                 nonAttendance1.setReason(nonAttendance.getReason());
                 nonAttendanceMapper.insert(nonAttendance1);
+            }
+            //上传文件
+            for (RecordVo.FileVo file : recordVo.getFiles()) {
+                File file1 = new File();
+                file1.setFilename(file.getName());
+                file1.setUrl(file.getUrl());
+                file1.setRecordId(Math.toIntExact(record.getId()));
+                fileMapper.insert(file1);
             }
             return true;
         }

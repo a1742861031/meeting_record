@@ -62,7 +62,7 @@ public class UserController {
 
     @ApiOperation("删除用户")
     @DeleteMapping("")
-    public R deleteUser( Integer[] ids) {
+    public R deleteUser(Integer[] ids) {
         for (Integer id : ids) {
             userService.removeById(id);
         }
@@ -123,20 +123,37 @@ public class UserController {
 
     @ApiOperation("用户注册")
     @PostMapping("/register")
-    public R register(@RequestBody User user){
+    public R register(@RequestBody User user) {
         boolean isSuccess = userService.register(user);
-        if(isSuccess){
+        if (isSuccess) {
             return new R();
         }
-        throw new MyException(new R("201","注册用户失败，请重试"));
+        throw new MyException(new R("201", "注册用户失败，请重试"));
     }
 
     @ApiOperation("获取所有的用户")
     @GetMapping("/allUser")
-    public R getAllUser(){
+    public R getAllUser() {
         List<UserVo> userVos = userService.getAllUser();
         return new R(userVos);
     }
 
+    @ApiOperation("更改头像")
+    @PostMapping("/update/avatar")
+    public R updateAvatar(@RequestBody ChangeAvatarVo changeAvatarVo) {
+        boolean updateAvatar = userService.updateAvatar(changeAvatarVo);
+        if (updateAvatar) {
+            return new R();
+        } else {
+            return new R(ErrorCode.Operation_error.getCode(), "更新头像失败");
+        }
+    }
+
+    @ApiOperation("修改用户信息")
+    @PutMapping("/update/profile")
+    public R updateProfile(@RequestBody ProfileChangeVo profileChangeVo) {
+        userService.updateProfile(profileChangeVo);
+        return new R("");
+    }
 }
 
