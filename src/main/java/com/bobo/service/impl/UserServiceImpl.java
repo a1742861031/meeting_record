@@ -10,10 +10,7 @@ import com.bobo.mapper.TypeMapper;
 import com.bobo.mapper.UserMapper;
 import com.bobo.service.UserService;
 import com.bobo.utils.JwtTokenUtils;
-import com.bobo.vo.EditPassVo;
-import com.bobo.vo.MyException;
-import com.bobo.vo.R;
-import com.bobo.vo.UserVo;
+import com.bobo.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -80,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String token = null;
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new MyException(new R<>("201","账号或密码错误"));
+            throw new MyException(new R<>("201", "账号或密码错误"));
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -117,12 +114,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<UserVo> getAllUser() {
         List<User> users = userMapper.selectList(null);
-        List<UserVo> userVos= new ArrayList<>();
+        List<UserVo> userVos = new ArrayList<>();
         for (User user : users) {
             UserVo userVo = new UserVo();
-            BeanUtil.copyProperties(user,userVo);
+            BeanUtil.copyProperties(user, userVo);
             userVos.add(userVo);
         }
         return userVos;
+    }
+
+    @Override
+    public boolean updateAvatar(ChangeAvatarVo changeAvatarVo) {
+        int i = userMapper.uploadAvatar(changeAvatarVo.getUserAvatar(), changeAvatarVo.getUserName());
+        return i >= 1;
+    }
+
+    @Override
+    public void updateProfile(ProfileChangeVo profileChangeVo) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name", profileChangeVo.getUserName());
+        User user = new User();
+        user.setUserEmail(profileChangeVo.getUserEmail());
+        user.setUserMobile(profileChangeVo.getUserMobile());
+        userMapper.update(user, wrapper);
     }
 }

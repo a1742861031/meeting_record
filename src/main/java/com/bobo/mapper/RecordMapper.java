@@ -1,8 +1,12 @@
 package com.bobo.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.Record;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.bobo.vo.RecordListVo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +18,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface RecordMapper extends BaseMapper<Record> {
-
+    List<RecordListVo> getRecordList(Page page);
 }

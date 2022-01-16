@@ -1,7 +1,6 @@
 package com.bobo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -16,30 +15,24 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author bobo
- * @since 2022-01-12
+ * @since 2022-01-16
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Record对象", description="")
-public class Record implements Serializable {
+@ApiModel(value="File对象", description="")
+public class File implements Serializable {
 
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private String content;
+    private Integer recordId;
 
-    private Date date;
+    private String filename;
 
-    private String place;
+    private String url;
 
-    private Long readNum;
 
-    private String recorder;
-
-    private String time;
-
-    private String title;
 }
