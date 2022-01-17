@@ -1,16 +1,17 @@
 package com.bobo.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.service.RecordService;
 import com.bobo.vo.ErrorCode;
 import com.bobo.vo.R;
+import com.bobo.vo.RecordListVo;
 import com.bobo.vo.RecordVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
  * <p>
@@ -28,12 +29,6 @@ public class RecordController {
     @Autowired
     private RecordService recordService;
 
-    @ApiOperation("获取所有的会议记录")
-    @GetMapping("list")
-    public R getRecords() {
-        List<RecordVo> records = recordService.getRecords();
-        return new R(records);
-    }
 
     @ApiOperation("新增会议记录")
     @PostMapping("")
@@ -54,14 +49,22 @@ public class RecordController {
         }
         return new R(ErrorCode.Operation_error.getCode(), "编辑会议失败");
     }
+
     @ApiOperation("删除会议")
     @DeleteMapping("{id}")
-    public R deleteRecord(@PathVariable Integer id){
+    public R deleteRecord(@PathVariable Integer id) {
         boolean delete = recordService.deleteByRecordId(id);
-        if(delete){
+        if (delete) {
             return new R();
         }
-        return new R(ErrorCode.Operation_error.getCode(),"删除会议失败");
+        return new R(ErrorCode.Operation_error.getCode(), "删除会议失败");
+    }
+
+    @ApiOperation("会议列表")
+    @GetMapping("list/{current}/{limit}")
+    public R getRecordList(@PathVariable Integer current,@PathVariable Integer limit) {
+        Page<RecordListVo> recordListVoPage = recordService.selectPage(current, limit);
+        return new R(recordListVoPage);
     }
 }
 
