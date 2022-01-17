@@ -22,8 +22,7 @@ public class RecordVo {
 
     private String content;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "YYYY-MM-DD HH:mm:ss")
-    private Date date;
+    private String date;
 
     private String place;
 
@@ -31,7 +30,6 @@ public class RecordVo {
 
     private String recorder;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm")
     private String time;
 
     //出席人员
@@ -40,13 +38,15 @@ public class RecordVo {
     private List<NonAttendanceVo> nonAttendances;
 
     private List<FileVo> files;
+
     @Data
-    public static class NonAttendanceVo{
+    public static class NonAttendanceVo {
         String userName;
         String reason;
     }
+
     @Data
-    public static class FileVo{
+    public static class FileVo {
         String name;
         String url;
     }

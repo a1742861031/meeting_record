@@ -3,9 +3,9 @@
 <mapper namespace="com.bobo.mapper.RecordMapper">
 
     <select id="getRecordList" resultType="com.bobo.vo.RecordListVo">
-        select record.id,record.recorder,record.date,record.time,user.user_avatar
-        ,record.content,record.read_num
+        select record.id as id,record.recorder as recorder,record.date as date,record.time as time,user.user_avatar
+        as user_avatar,record.content as content,record.read_num as readNum,record.title as title
         from record, user
-        where record.recorder= user.user_name
+        where record.recorder= user.user_name order by record.date desc
     </select>
 </mapper>

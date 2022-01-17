@@ -1,14 +1,16 @@
 package com.bobo.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.Record;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bobo.vo.RecordListVo;
 import com.bobo.vo.RecordVo;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author bobo
@@ -23,4 +25,6 @@ public interface RecordService extends IService<Record> {
     Boolean editRecord(RecordVo recordVo);
 
     boolean deleteByRecordId(Integer id);
+
+    Page<RecordListVo> selectPage(Integer current, Integer limit);
 }

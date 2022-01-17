@@ -18,4 +18,5 @@ public class RecordListVo {
     private String time;
     private Integer readNum;
     private String content;
+    private String title;
 }

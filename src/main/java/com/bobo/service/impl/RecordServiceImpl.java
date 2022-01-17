@@ -2,6 +2,7 @@ package com.bobo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.Attendance;
 import com.bobo.entity.File;
 import com.bobo.entity.NonAttendance;
@@ -12,6 +13,8 @@ import com.bobo.mapper.NonAttendanceMapper;
 import com.bobo.mapper.RecordMapper;
 import com.bobo.service.RecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bobo.utils.HtmlSpiritUtils;
+import com.bobo.vo.RecordListVo;
 import com.bobo.vo.RecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,7 +78,6 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     @Override
     @Transactional
     public Boolean addRecord(RecordVo recordVo) {
-        System.out.println(recordVo);
         Record record = new Record();
         BeanUtil.copyProperties(recordVo, record);
         int insert = recordMapper.insert(record);
@@ -140,5 +142,16 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Page<RecordListVo> selectPage(Integer current, Integer limit) {
+        Page<RecordListVo> page = new Page<>(current, limit);
+        recordMapper.getRecordList(page);
+        for (RecordListVo record : page.getRecords()) {
+            String content = HtmlSpiritUtils.delHTMLTag(record.getContent());
+            record.setContent(content);
+        }
+        return page;
     }
 }

@@ -1,5 +1,6 @@
 package com.bobo.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.Record;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -10,7 +11,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author bobo
@@ -18,5 +19,5 @@ import java.util.List;
  */
 @Mapper
 public interface RecordMapper extends BaseMapper<Record> {
-    List<RecordListVo> getRecordList(Page page);
+    IPage<RecordListVo> getRecordList(IPage<RecordListVo> page);
 }
