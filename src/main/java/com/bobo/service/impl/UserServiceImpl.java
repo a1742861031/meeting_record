@@ -113,7 +113,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<UserVo> getAllUser() {
-        List<User> users = userMapper.selectList(null);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.orderByAsc("user_type");
+        List<User> users = userMapper.selectList(wrapper);
         List<UserVo> userVos = new ArrayList<>();
         for (User user : users) {
             UserVo userVo = new UserVo();
@@ -137,5 +139,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUserEmail(profileChangeVo.getUserEmail());
         user.setUserMobile(profileChangeVo.getUserMobile());
         userMapper.update(user, wrapper);
+    }
+
+    @Override
+    public void editPassByName(EditPassVo1 editPassVo1) {
+        String encode = passwordEncoder.encode(editPassVo1.getPassword1());
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name", editPassVo1.getUserName());
+        User user = userMapper.selectOne(wrapper);
+        user.setUserPassword(encode);
+        userMapper.updateById(user);
     }
 }

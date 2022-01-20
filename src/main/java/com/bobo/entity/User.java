@@ -73,6 +73,9 @@ public class User implements Serializable, UserDetails {
      */
     private Integer isAdmin;
 
+
+    private Integer isLocked;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> list = new ArrayList<>();
@@ -97,7 +100,7 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isLocked == 0;
     }
 
     @Override

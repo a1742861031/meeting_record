@@ -120,7 +120,12 @@ public class UserController {
         userService.editPass(editPassVo);
         return new R();
     }
-
+    @ApiOperation("通过用户名修改密码")
+    @PutMapping("editPassByName")
+    public R editPasswordByName(@RequestBody EditPassVo1 editPassVo1){
+        userService.editPassByName(editPassVo1);
+        return new R<>();
+    }
     @ApiOperation("用户注册")
     @PostMapping("/register")
     public R register(@RequestBody User user) {
@@ -155,5 +160,20 @@ public class UserController {
         userService.updateProfile(profileChangeVo);
         return new R("");
     }
+
+    @ApiOperation("锁定解锁该账户")
+    @GetMapping("/lock/{id}")
+    public R lockOrUnlockUser(@PathVariable Integer id) {
+        User user = userService.getById(id);
+        if (user.getIsLocked() == 0) {
+            user.setIsLocked(1);
+        } else {
+            user.setIsLocked(0);
+        }
+        userService.updateById(user);
+        return new R();
+    }
+
+
 }
 

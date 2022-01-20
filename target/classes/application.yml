@@ -3,17 +3,22 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/meeting?useSSL=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://1.117.152.124:3306/meeting?useSSL=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: 123456
   security:
     user:
       name: admin
       password: 123456
-
+  servlet:
+    multipart:
+      max-file-size: 80MB
+      max-request-size: 80MB
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
 # 自定义jwt key
 jwt:
   tokenHeader: Authorization #JWT存储的请求头

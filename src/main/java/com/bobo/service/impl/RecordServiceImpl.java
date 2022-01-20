@@ -15,6 +15,7 @@ import com.bobo.service.RecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bobo.utils.HtmlSpiritUtils;
 import com.bobo.vo.RecordListVo;
+import com.bobo.vo.RecordShowVo;
 import com.bobo.vo.RecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,24 +111,43 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
     @Override
     @Transactional
-    public Boolean editRecord(RecordVo recordVo) {
+    /*修改记录*/
+    public void editRecord(RecordVo recordVo) {
         Record record = new Record();
         BeanUtil.copyProperties(recordVo, record);
-        int update = recordMapper.updateById(record);
-        if (update > 0) {
-            QueryWrapper<Attendance> attendanceWrapper = new QueryWrapper<>();
-            QueryWrapper<NonAttendance> nonAttendanceWrapper = new QueryWrapper<>();
-            attendanceMapper.delete(attendanceWrapper);
-            nonAttendanceMapper.delete(nonAttendanceWrapper);
-//            for (Attendance attendance : recordVo.getAttendances()) {
-//                attendanceMapper.insert(attendance);
-//            }
-//            for (NonAttendance nonAttendance : recordVo.getNonAttendances()) {
-//                nonAttendanceMapper.insert(nonAttendance);
-//            }
-            return true;
+        recordMapper.updateById(record);
+        //修改缺席人员
+        QueryWrapper<NonAttendance> nonAttendanceWrapper = new QueryWrapper<>();
+        nonAttendanceWrapper.eq("record_id", record.getId());
+        nonAttendanceMapper.delete(nonAttendanceWrapper);
+        for (RecordVo.NonAttendanceVo nonAttendance : recordVo.getNonAttendances()) {
+            NonAttendance nonAttendance1 = new NonAttendance();
+            nonAttendance1.setRecordId(record.getId());
+            nonAttendance1.setPersonName(nonAttendance.getUserName());
+            nonAttendance1.setReason(nonAttendance.getReason());
+            nonAttendanceMapper.insert(nonAttendance1);
         }
-        return false;
+        //修改出席人员
+        QueryWrapper<Attendance> wrapper = new QueryWrapper<>();
+        wrapper.eq("record_id", record.getId());
+        attendanceMapper.delete(wrapper);
+        for (String attendance : recordVo.getAttendances()) {
+            Attendance attendance1 = new Attendance();
+            attendance1.setRecordId(record.getId());
+            attendance1.setPersonName(attendance);
+            attendanceMapper.insert(attendance1);
+        }
+        //修改文件列表
+        QueryWrapper<File> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("record_id", record.getId());
+        fileMapper.delete(wrapper1);
+        for (RecordVo.FileVo file : recordVo.getFiles()) {
+            File file1 = new File();
+            file1.setFilename(file.getName());
+            file1.setUrl(file.getUrl());
+            file1.setRecordId(Math.toIntExact(record.getId()));
+            fileMapper.insert(file1);
+        }
     }
 
     @Override
@@ -153,5 +173,80 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
             record.setContent(content);
         }
         return page;
+    }
+
+    @Override
+    @Transactional
+    public RecordShowVo getRecordShow(Integer id) {
+        Record record = recordMapper.selectById(id);
+        record.setReadNum(record.getReadNum() + 1);
+        RecordShowVo recordShowVo = new RecordShowVo();
+        BeanUtil.copyProperties(record, recordShowVo);
+        QueryWrapper<File> fileWrapper = new QueryWrapper<>();
+        fileWrapper.eq("record_id", id);
+        List<File> files = fileMapper.selectList(fileWrapper);
+        ArrayList<RecordShowVo.FileVo> fileVos = new ArrayList<>();
+        for (File file : files) {
+            RecordShowVo.FileVo fileVo = new RecordShowVo.FileVo();
+            fileVo.setFilename(file.getFilename());
+            fileVo.setUrl(file.getUrl());
+            fileVos.add(fileVo);
+        }
+        recordShowVo.setFiles(fileVos);
+        QueryWrapper<Attendance> attendanceWrapper = new QueryWrapper<>();
+        attendanceWrapper.eq("record_id", id);
+        ArrayList<String> attendString = new ArrayList<>();
+        for (Attendance attendance : attendanceMapper.selectList(attendanceWrapper)) {
+            attendString.add(attendance.getPersonName());
+        }
+        recordShowVo.setAttend(attendString);
+        QueryWrapper<NonAttendance> nonAttendanceWrapper = new QueryWrapper<>();
+        ArrayList<RecordVo.NonAttendanceVo> nonAttendString = new ArrayList<>();
+        nonAttendanceWrapper.eq("record_id", id);
+        for (NonAttendance nonAttendance : nonAttendanceMapper.selectList(nonAttendanceWrapper)) {
+            RecordVo.NonAttendanceVo nonAttendanceVo = new RecordVo.NonAttendanceVo();
+            nonAttendanceVo.setUserName(nonAttendance.getPersonName());
+            nonAttendanceVo.setReason(nonAttendance.getReason());
+            nonAttendString.add(nonAttendanceVo);
+        }
+        recordShowVo.setNonAttend(nonAttendString);
+        recordMapper.updateById(record);
+        return recordShowVo;
+    }
+
+    @Override
+    public RecordVo getEditRecord(Integer id) {
+        Record record = recordMapper.selectById(id);
+        RecordVo recordVo = new RecordVo();
+        BeanUtil.copyProperties(record, recordVo);
+        QueryWrapper<File> fileWrapper = new QueryWrapper<>();
+        fileWrapper.eq("record_id", id);
+        List<File> files = fileMapper.selectList(fileWrapper);
+        ArrayList<RecordVo.FileVo> fileVos = new ArrayList<>();
+        for (File file : files) {
+            RecordVo.FileVo fileVo = new RecordVo.FileVo();
+            fileVo.setName(file.getFilename());
+            fileVo.setUrl(file.getUrl());
+            fileVos.add(fileVo);
+        }
+        recordVo.setFiles(fileVos);
+        QueryWrapper<Attendance> attendanceWrapper = new QueryWrapper<>();
+        attendanceWrapper.eq("record_id", id);
+        ArrayList<String> attendString = new ArrayList<>();
+        for (Attendance attendance : attendanceMapper.selectList(attendanceWrapper)) {
+            attendString.add(attendance.getPersonName());
+        }
+        recordVo.setAttendances(attendString);
+        QueryWrapper<NonAttendance> nonAttendanceWrapper = new QueryWrapper<>();
+        ArrayList<RecordVo.NonAttendanceVo> nonAttendString = new ArrayList<>();
+        nonAttendanceWrapper.eq("record_id", id);
+        for (NonAttendance nonAttendance : nonAttendanceMapper.selectList(nonAttendanceWrapper)) {
+            RecordVo.NonAttendanceVo nonAttendanceVo = new RecordVo.NonAttendanceVo();
+            nonAttendanceVo.setUserName(nonAttendance.getPersonName());
+            nonAttendanceVo.setReason(nonAttendance.getReason());
+            nonAttendString.add(nonAttendanceVo);
+        }
+        recordVo.setNonAttendances(nonAttendString);
+        return recordVo;
     }
 }
