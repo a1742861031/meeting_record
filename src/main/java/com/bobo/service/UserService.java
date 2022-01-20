@@ -3,10 +3,7 @@ package com.bobo.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.bobo.vo.ChangeAvatarVo;
-import com.bobo.vo.EditPassVo;
-import com.bobo.vo.ProfileChangeVo;
-import com.bobo.vo.UserVo;
+import com.bobo.vo.*;
 
 import java.util.List;
 
@@ -35,4 +32,6 @@ public interface UserService extends IService<User> {
     boolean updateAvatar(ChangeAvatarVo changeAvatarVo);
 
     void updateProfile(ProfileChangeVo profileChangeVo);
+
+    void editPassByName(EditPassVo1 editPassVo1);
 }

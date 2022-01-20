@@ -1,10 +1,8 @@
 package com.bobo.vo;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,5 +48,4 @@ public class RecordVo {
         String name;
         String url;
     }
-
 }

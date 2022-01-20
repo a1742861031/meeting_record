@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.entity.Record;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bobo.vo.RecordListVo;
+import com.bobo.vo.RecordShowVo;
 import com.bobo.vo.RecordVo;
 
 import java.util.List;
@@ -22,9 +23,13 @@ public interface RecordService extends IService<Record> {
 
     Boolean addRecord(RecordVo recordVo);
 
-    Boolean editRecord(RecordVo recordVo);
+    void editRecord(RecordVo recordVo);
 
     boolean deleteByRecordId(Integer id);
 
     Page<RecordListVo> selectPage(Integer current, Integer limit);
+
+    RecordShowVo getRecordShow(Integer id);
+
+    RecordVo getEditRecord(Integer id);
 }

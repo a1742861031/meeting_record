@@ -79,16 +79,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder());
     }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         //获取登录用户信息
         return username -> {
             User user = userService.getUserByUsername(username);
+
             if (user != null) {
+                if (user.getIsLocked() == 1) {
+                    throw new MyException(new R("400","当前用户被锁定"));
+                }
                 return user;
 //                List<UmsPermission> permissionList = adminService.getPermissionList(admin.getId());
 //                return new AdminUserDetails(admin,permissionList);
@@ -96,8 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             throw new MyException(new R("400", "用户名或密码错误"));
         };
     }
+
     @Bean
-    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
+    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
         return new JwtAuthenticationTokenFilter();
     }
 

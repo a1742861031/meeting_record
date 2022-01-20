@@ -3,10 +3,7 @@ package com.bobo.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bobo.service.RecordService;
-import com.bobo.vo.ErrorCode;
-import com.bobo.vo.R;
-import com.bobo.vo.RecordListVo;
-import com.bobo.vo.RecordVo;
+import com.bobo.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +39,9 @@ public class RecordController {
 
     @ApiOperation("修改会议记录")
     @PutMapping("")
-    public R editRecord(RecordVo recordVo) {
-        Boolean edit = recordService.editRecord(recordVo);
-        if (edit) {
-            return new R();
-        }
-        return new R(ErrorCode.Operation_error.getCode(), "编辑会议失败");
+    public R editRecord(@RequestBody RecordVo recordVo) {
+        recordService.editRecord(recordVo);
+        return new R();
     }
 
     @ApiOperation("删除会议")
@@ -62,9 +56,23 @@ public class RecordController {
 
     @ApiOperation("会议列表")
     @GetMapping("list/{current}/{limit}")
-    public R getRecordList(@PathVariable Integer current,@PathVariable Integer limit) {
+    public R getRecordList(@PathVariable Integer current, @PathVariable Integer limit) {
         Page<RecordListVo> recordListVoPage = recordService.selectPage(current, limit);
         return new R(recordListVoPage);
+    }
+
+    @ApiOperation("返回该会议记录的内容")
+    @GetMapping("/show/{id}")
+    public R getRecordShowById(@PathVariable Integer id) {
+        RecordShowVo recordShowVo = recordService.getRecordShow(id);
+        return new R(recordShowVo);
+    }
+
+    @ApiOperation("获取要编辑的会议内容")
+    @GetMapping("/edit/{id}")
+    public R getEditRecord(@PathVariable Integer id) {
+        RecordVo recordVo = recordService.getEditRecord(id);
+        return new R(recordVo);
     }
 }
 
